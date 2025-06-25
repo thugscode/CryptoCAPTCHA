@@ -1,68 +1,132 @@
-# README.md
+# CryptoCAPTCHA: Hash-Based Cryptographic Challenge
 
-# CAPTCHA as a Cryptographic Puzzle Solver
+A web application that challenges users to solve SHA-256 hash puzzles, combining cryptographic concepts with interactive visualization.
 
-This project is a Flask web application that allows users to solve a CAPTCHA that doubles as a cryptographic puzzle. The application generates a CAPTCHA image displaying three random numbers and challenges the user to select two numbers whose SHA-256 hash (of their concatenation) ends with 'ff'. Upon successful validation, an HMAC token is generated as proof of solution.
+## Overview
+
+CryptoCAPTCHA is an educational tool demonstrating core cryptographic concepts like hashing and proof-of-work through an interactive puzzle interface. Users select pairs of numbers to find combinations whose concatenated SHA-256 hash ends with \`ff\`, similar to simplified cryptocurrency mining challenges.
+
+![CryptoCAPTCHA Screenshot](screenshot.png)
+
+## Features
+
+- **Interactive Hash Puzzle**: Select number combinations and instantly see their SHA-256 hash
+- **Real-time Hash Visualization**: Watch the hash change as you select different number pairs
+- **Visual Feedback**: Clear indications when a valid solution is found
+- **HMAC Token Generation**: Successful solutions generate a cryptographically signed token as proof
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## Project Structure
 
-```
-captcha-puzzle-app
-├── src
-│   ├── app.py                # Main entry point of the Flask application
-│   ├── templates             # HTML templates for the application
+\`\`\`
+CryptoCAPTCHA/
+├── src/
+│   ├── app.py                # Flask application entry point
+│   ├── templates/            # HTML templates
 │   │   ├── base.html         # Base template with common structure
-│   │   ├── index.html        # Main page for CAPTCHA and input
-│   │   └── result.html       # Result page displaying validation outcome
-│   ├── static                # Static files such as CSS
-│   │   └── styles.css        # CSS styles for the application
-│   ├── utils                 # Utility functions for CAPTCHA and cryptography
-│   │   ├── __init__.py       # Marks the utils directory as a Python package
-│   │   ├── captcha.py        # Functions for generating CAPTCHA images
-│   │   └── crypto.py         # Functions for hashing and HMAC generation
-│   └── config.py             # Configuration settings for the Flask app
+│   │   └── index.html        # Main challenge interface
+│   ├── static/               # Static assets
+│   │   ├── styles.css        # CSS styling
+│   │   └── fonts/            # Custom fonts (optional)
+│   └── utils/                # Utility functions
+│       ├── __init__.py       # Package marker
+│       ├── captcha.py        # CAPTCHA/challenge generation (if using images)
+│       └── crypto.py         # Cryptographic functions (if separated)
 ├── requirements.txt          # Project dependencies
-├── .env                      # Environment variables
-├── .gitignore                # Files to ignore in Git
-└── README.md                 # Project documentation
-```
+├── README.md                 # This documentation
+└── .gitignore                # Git ignore configuration
+\`\`\`
 
-## Requirements
+## Technical Implementation
 
-To run this project, you need to have the following dependencies installed:
+### Cryptographic Challenge
 
-- Flask
-- Pillow
-- Any other necessary libraries listed in `requirements.txt`
+The core challenge is based on a simplified version of Bitcoin's proof-of-work concept:
 
-## Setup Instructions
+1. The system presents three random numbers to the user
+2. Users must find two numbers whose concatenation produces a SHA-256 hash ending with \`ff\`
+3. Upon finding a valid solution, the system generates an HMAC token as proof
+
+### Technologies Used
+
+- **Backend**: Python with Flask
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Cryptography**: SHA-256 hashing (both server-side and client-side)
+- **Security**: HMAC token generation for verified solutions
+
+## Installation and Setup
 
 1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd captcha-puzzle-app
-   ```
+   \`\`\`
+   git clone https://github.com/yourusername/CryptoCAPTCHA.git
+   cd CryptoCAPTCHA
+   \`\`\`
 
-2. Install the required dependencies:
-   ```
+2. Create a virtual environment (recommended):
+   \`\`\`
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
+   \`\`\`
+
+3. Install dependencies:
+   \`\`\`
    pip install -r requirements.txt
-   ```
-
-3. Set up environment variables in the `.env` file as needed.
+   \`\`\`
 
 4. Run the application:
-   ```
-   python src/app.py
-   ```
+   \`\`\`
+   cd src
+   python app.py
+   \`\`\`
 
-5. Open your web browser and navigate to `http://127.0.0.1:5000` to access the application.
+5. Open your web browser and navigate to \`http://127.0.0.1:5000\`
 
-## Usage
+## Usage Guide
 
-- The main page will display a CAPTCHA image with three random numbers.
-- Select two numbers and submit your choice.
-- The application will validate your input and display the result along with the generated HMAC token if the solution is correct.
+1. **Challenge Generation**:
+   - When the page loads, three random numbers are displayed
+   - Click \"New Numbers\" to generate a different set of numbers
+
+2. **Finding a Solution**:
+   - Click on two different numbers to select them
+   - The hash preview will update in real-time
+   - Look for combinations where the hash ends with \"ff\"
+
+3. **Verification**:
+   - Once you find a potential solution, click \"Verify Solution\"
+   - If correct, you'll see a success message and a proof token
+   - If incorrect, you'll see an error explaining why
+
+4. **Understanding the Challenge**:
+   - The difficulty can be adjusted by changing the target suffix
+   - This demonstrates the core concept of cryptocurrency mining difficulty
+
+## Educational Value
+
+This project helps demonstrate several key concepts in cryptography:
+
+- **Hash Functions**: One-way functions that produce fixed-length outputs
+- **Hash Properties**: Unpredictability of outputs based on small input changes
+- **Proof-of-Work**: Finding inputs that produce specific hash outputs
+- **Digital Signatures**: Using HMAC for validating successful solutions
+
+## Customization Options
+
+The application can be customized in several ways:
+
+- **Difficulty Level**: Change the required suffix from \"ff\" to require more specific endings
+- **Number Range**: Modify the range of generated numbers
+- **Visual Theme**: Customize the CSS to match your preferred style
+- **Challenge Type**: Add different types of cryptographic puzzles
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- Inspired by cryptocurrency mining concepts
+- Built with Flask and modern web technologies
+- Special thanks to contributors and the cryptographic community
+
+---
