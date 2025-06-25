@@ -2,6 +2,8 @@
 
 A web application that challenges users to solve SHA-256 hash puzzles, combining cryptographic concepts with interactive visualization.
 
+![CryptoCAPTCHA Screenshot](src/static/image/CryptoCAPCHA.png)
+
 ## Overview
 
 CryptoCAPTCHA is an educational tool demonstrating core cryptographic concepts like hashing and proof-of-work through an interactive puzzle interface. Users select pairs of numbers to find combinations whose concatenated SHA-256 hash ends with `f`, similar to simplified cryptocurrency mining challenges.
