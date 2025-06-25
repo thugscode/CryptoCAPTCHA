@@ -4,9 +4,7 @@ A web application that challenges users to solve SHA-256 hash puzzles, combining
 
 ## Overview
 
-CryptoCAPTCHA is an educational tool demonstrating core cryptographic concepts like hashing and proof-of-work through an interactive puzzle interface. Users select pairs of numbers to find combinations whose concatenated SHA-256 hash ends with \`ff\`, similar to simplified cryptocurrency mining challenges.
-
-![CryptoCAPTCHA Screenshot](screenshot.png)
+CryptoCAPTCHA is an educational tool demonstrating core cryptographic concepts like hashing and proof-of-work through an interactive puzzle interface. Users select pairs of numbers to find combinations whose concatenated SHA-256 hash ends with `f`, similar to simplified cryptocurrency mining challenges.
 
 ## Features
 
@@ -18,24 +16,29 @@ CryptoCAPTCHA is an educational tool demonstrating core cryptographic concepts l
 
 ## Project Structure
 
-\`\`\`
+```
 CryptoCAPTCHA/
-├── src/
+│
+├── src/                      # Source code directory
 │   ├── app.py                # Flask application entry point
+│   │
 │   ├── templates/            # HTML templates
 │   │   ├── base.html         # Base template with common structure
 │   │   └── index.html        # Main challenge interface
+│   │
 │   ├── static/               # Static assets
 │   │   ├── styles.css        # CSS styling
 │   │   └── fonts/            # Custom fonts (optional)
+│   │
 │   └── utils/                # Utility functions
 │       ├── __init__.py       # Package marker
 │       ├── captcha.py        # CAPTCHA/challenge generation (if using images)
 │       └── crypto.py         # Cryptographic functions (if separated)
+│
 ├── requirements.txt          # Project dependencies
 ├── README.md                 # This documentation
 └── .gitignore                # Git ignore configuration
-\`\`\`
+```
 
 ## Technical Implementation
 
@@ -44,7 +47,7 @@ CryptoCAPTCHA/
 The core challenge is based on a simplified version of Bitcoin's proof-of-work concept:
 
 1. The system presents three random numbers to the user
-2. Users must find two numbers whose concatenation produces a SHA-256 hash ending with \`ff\`
+2. Users must find two numbers whose concatenation produces a SHA-256 hash ending with `f`
 3. Upon finding a valid solution, the system generates an HMAC token as proof
 
 ### Technologies Used
@@ -57,43 +60,43 @@ The core challenge is based on a simplified version of Bitcoin's proof-of-work c
 ## Installation and Setup
 
 1. Clone the repository:
-   \`\`\`
+   ```
    git clone https://github.com/yourusername/CryptoCAPTCHA.git
    cd CryptoCAPTCHA
-   \`\`\`
+   ```
 
 2. Create a virtual environment (recommended):
-   \`\`\`
+   ```
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-   \`\`\`
+   ```
 
 3. Install dependencies:
-   \`\`\`
+   ```
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 4. Run the application:
-   \`\`\`
+   ```
    cd src
    python app.py
-   \`\`\`
+   ```
 
-5. Open your web browser and navigate to \`http://127.0.0.1:5000\`
+5. Open your web browser and navigate to `http://127.0.0.1:5000`
 
 ## Usage Guide
 
 1. **Challenge Generation**:
    - When the page loads, three random numbers are displayed
-   - Click \"New Numbers\" to generate a different set of numbers
+   - Click "New Numbers" to generate a different set of numbers
 
 2. **Finding a Solution**:
    - Click on two different numbers to select them
    - The hash preview will update in real-time
-   - Look for combinations where the hash ends with \"ff\"
+   - Look for combinations where the hash ends with "ff"
 
 3. **Verification**:
-   - Once you find a potential solution, click \"Verify Solution\"
+   - Once you find a potential solution, click "Verify Solution"
    - If correct, you'll see a success message and a proof token
    - If incorrect, you'll see an error explaining why
 
@@ -114,7 +117,7 @@ This project helps demonstrate several key concepts in cryptography:
 
 The application can be customized in several ways:
 
-- **Difficulty Level**: Change the required suffix from \"ff\" to require more specific endings
+- **Difficulty Level**: Change the required suffix from "ff" to require more specific endings
 - **Number Range**: Modify the range of generated numbers
 - **Visual Theme**: Customize the CSS to match your preferred style
 - **Challenge Type**: Add different types of cryptographic puzzles

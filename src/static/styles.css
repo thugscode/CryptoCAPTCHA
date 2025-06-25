@@ -214,8 +214,60 @@ input[readonly] {
 }
 
 .hash-value.calculating {
-    background: #f1f5f9;
-    color: #64748b;
+    position: relative;
+    min-height: 1.5em;
+}
+
+.hash-value.calculating::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #6366f1;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Add a fallback message for slower devices */
+.hash-value.calculating::before {
+    content: "";
+    display: inline-block;
+    transition: opacity 1s ease;
+    opacity: 0;
+}
+
+.hash-value.calculating.slow::before {
+    content: "(This may take a moment on some devices)";
+    font-size: 0.8em;
+    color: #6b7280;
+    font-style: italic;
+    opacity: 1;
+    margin-top: 0.5em;
+    display: block;
+}
+
+/* Add a timeout to show the slow message after 1.5 seconds */
+.hash-value.calculating {
+    animation: checkSlow 1.5s forwards;
+}
+
+@keyframes checkSlow {
+    0%, 99% { }
+    100% { animation-name: none; }
+}
+
+/* JavaScript will add this class after the animation completes if still calculating */
+.hash-value.calculating.slow-check {
+    animation: none;
 }
 
 .hash-value.valid-hash {
@@ -227,6 +279,17 @@ input[readonly] {
     color: #10b981;
     font-weight: bold;
     font-size: 1.1rem;
+    background-color: #ecfdf5;
+    padding: 0 3px;
+    border-radius: 3px;
+    margin-left: 2px;
+}
+
+/* Make the highlighted character more visible */
+.valid-hash .hash-highlight {
+    color: #047857;
+    background-color: #d1fae5;
+    border: 1px solid #34d399;
 }
 
 /* Selection styling */

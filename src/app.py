@@ -30,11 +30,12 @@ def index():
         if not first_number or not second_number:
             result = {'success': False, 'message': 'Please select two numbers'}
         else:
-            # Check if the hash of the concatenated numbers ends with 'ff'
+            # Check if the hash of the concatenated numbers ends with 'f'
+            # Changed from 'ff' to 'f' for single character ending
             concat = f"{first_number}{second_number}"
             hash_result = hashlib.sha256(concat.encode()).hexdigest()
             
-            if hash_result.endswith('ff'):
+            if hash_result.endswith('f'):  # Changed from 'ff' to 'f'
                 token = hmac.new(
                     app.secret_key.encode(),
                     concat.encode(),
@@ -42,7 +43,7 @@ def index():
                 ).hexdigest()
                 result = {'success': True, 'token': token}
             else:
-                result = {'success': False, 'message': f'Invalid solution. The hash does not end with "ff". Got: {hash_result[-2:]}'}
+                result = {'success': False, 'message': f'Invalid solution. The hash does not end with "f". Got: {hash_result[-1:]}'}
     
     return render_template('index.html', captcha_numbers=puzzle_numbers, result=result)
 
