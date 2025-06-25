@@ -31,11 +31,10 @@ def index():
             result = {'success': False, 'message': 'Please select two numbers'}
         else:
             # Check if the hash of the concatenated numbers ends with 'f'
-            # Changed from 'ff' to 'f' for single character ending
             concat = f"{first_number}{second_number}"
             hash_result = hashlib.sha256(concat.encode()).hexdigest()
             
-            if hash_result.endswith('f'):  # Changed from 'ff' to 'f'
+            if hash_result.endswith('f'):  # Single 'f' check
                 token = hmac.new(
                     app.secret_key.encode(),
                     concat.encode(),

@@ -14,13 +14,13 @@
             <p class="subtitle">SHA-256 Hash Puzzle</p>
         </header>
 
-        <div class="instructions">
-            <h2>Challenge Instructions</h2>
-            <p>Select <strong>two numbers</strong> from below whose SHA-256 hash (when concatenated) ends with '<strong>f</strong>'.</p>
-            <p class="challenge-info">This is a proof-of-work puzzle similar to cryptocurrency mining challenges.</p>
-        </div>
-
         <form method="POST">
+            <div class="instructions">
+                <h2>Challenge Instructions</h2>
+                <p>Select <strong>two numbers</strong> from below whose SHA-256 hash (when concatenated) ends with '<strong>f</strong>'.</p>
+                <p class="challenge-info">This is a simplified demonstration of proof-of-work concepts used in cryptocurrency mining.</p>
+            </div>
+
             <div class="puzzle-container">
                 <div class="puzzle-numbers" id="puzzle-numbers">
                     {% if captcha_numbers %}
@@ -32,12 +32,12 @@
                     {% endif %}
                 </div>
                 <div class="new-puzzle-btn" onclick="generateNewPuzzle()">
-                    <i class="refresh-icon">↻</i> New Numbers
+                    <i class="refresh-icon">↻</i> Generate New Numbers
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="selection">Your Solution:</label>
+                <label for="selection">Your Selected Numbers:</label>
                 <div class="selection-container">
                     <input type="number" name="first_number" id="first_number" placeholder="First number" required readonly>
                     <span class="selection-separator">+</span>
@@ -46,22 +46,22 @@
             </div>
 
             <div class="hash-preview" id="hash-preview">
-                <div class="hash-label">Hash Preview:</div>
+                <div class="hash-label">SHA-256 Hash Preview:</div>
                 <div class="hash-value" id="hash-value">Select two numbers to see their hash</div>
             </div>
 
             <div class="button-group">
                 <button type="submit" class="primary">Verify Solution</button>
-                <button type="button" class="secondary" onclick="clearSelection()">Clear</button>
+                <button type="button" class="secondary" onclick="clearSelection()">Reset Selection</button>
             </div>
             
             {% if result %}
                 <div class="result {% if result.success %}success{% else %}error{% endif %}">
                     {% if result.success %}
                         <h3>Solution Verified!</h3>
-                        <p>You've correctly found a pair of numbers whose hash ends with 'ff'.</p>
+                        <p>You've correctly found a pair of numbers whose hash ends with 'f'.</p>
                         <div class="token-display">
-                            <h4>Your Proof Token:</h4>
+                            <h4>Verification Token:</h4>
                             <div class="token-code">{{ result.token }}</div>
                         </div>
                     {% else %}
