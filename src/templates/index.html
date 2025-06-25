@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoCAPTCHA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Crypto Challenge</h1>
+            <p class="subtitle">SHA-256 Hash Puzzle</p>
+        </header>
+
+        <div class="instructions">
+            <h2>Challenge Instructions</h2>
+            <p>Select <strong>two numbers</strong> from below whose SHA-256 hash (when concatenated) ends with '<strong>ff</strong>'.</p>
+            <p class="challenge-info">This is a proof-of-work puzzle similar to cryptocurrency mining challenges.</p>
+        </div>
+
+        <form method="POST">
+            <div class="puzzle-container">
+                <div class="puzzle-numbers" id="puzzle-numbers">
+                    {% if captcha_numbers %}
+                        {% for number in captcha_numbers %}
+                            <div class="number-tile" data-value="{{ number }}">{{ number }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="error-message">Error loading numbers</div>
+                    {% endif %}
+                </div>
+                <div class="new-puzzle-btn" onclick="generateNewPuzzle()">
+                    <i class="refresh-icon">↻</i> New Numbers
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="selection">Your Solution:</label>
+                <div class="selection-container">
+                    <input type="number" name="first_number" id="first_number" placeholder="First number" required readonly>
+                    <span class="selection-separator">+</span>
+                    <input type="number" name="second_number" id="second_number" placeholder="Second number" required readonly>
+                </div>
+            </div>
+
+            <div class="hash-preview" id="hash-preview">
+                <div class="hash-label">Hash Preview:</div>
+                <div class="hash-value" id="hash-value">Select two numbers to see their hash</div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="primary">Verify Solution</button>
+                <button type="button" class="secondary" onclick="clearSelection()">Clear</button>
+            </div>
+            
+            {% if result %}
+                <div class="result {% if result.success %}success{% else %}error{% endif %}">
+                    {% if result.success %}
+                        <h3>Solution Verified!</h3>
+                        <p>You've correctly found a pair of numbers whose hash ends with 'ff'.</p>
+                        <div class="token-display">
+                            <h4>Your Proof Token:</h4>
+                            <div class="token-code">{{ result.token }}</div>
+                        </div>
+                    {% else %}
+                        <h3>Verification Failed</h3>
+                        <p>{{ result.message }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up number selection
+        const numberTiles = document.querySelectorAll('.number-tile');
+        const firstNumberInput = document.getElementById('first_number');
+        const secondNumberInput = document.getElementById('second_number');
+        const hashPreview = document.getElementById('hash-value');
+        
+        numberTiles.forEach(tile => {
+            tile.addEventListener('click', function() {
+                const selectedValue = this.dataset.value;
+                
+                // Toggle selection styling
+                this.classList.toggle('selected');
+                
+                // Update input fields based on selection
+                if (this.classList.contains('selected')) {
+                    if (!firstNumberInput.value) {
+                        firstNumberInput.value = selectedValue;
+                    } else if (!secondNumberInput.value) {
+                        secondNumberInput.value = selectedValue;
+                    } else {
+                        // If both inputs are filled, replace the first one and shift
+                        firstNumberInput.value = secondNumberInput.value;
+                        secondNumberInput.value = selectedValue;
+                        
+                        // Update selected styling
+                        numberTiles.forEach(num => {
+                            if (num.dataset.value !== secondNumberInput.value && 
+                                num.dataset.value !== firstNumberInput.value) {
+                                num.classList.remove('selected');
+                            }
+                        });
+                    }
+                } else {
+                    // Remove from inputs if deselected
+                    if (firstNumberInput.value === selectedValue) {
+                        firstNumberInput.value = '';
+                    } else if (secondNumberInput.value === selectedValue) {
+                        secondNumberInput.value = '';
+                    }
+                }
+                
+                // Update hash preview
+                updateHashPreview();
+            });
+        });
+        
+        // Function to update hash preview
+        function updateHashPreview() {
+            const first = firstNumberInput.value;
+            const second = secondNumberInput.value;
+            
+            if (first && second) {
+                // Show loading indicator
+                hashPreview.innerHTML = 'Computing hash...';
+                hashPreview.classList.add('calculating');
+                
+                // Calculate hash (using async to show loading effect)
+                setTimeout(() => {
+                    const concat = first + second;
+                    crypto.subtle.digest('SHA-256', new TextEncoder().encode(concat))
+                    .then(hashBuffer => {
+                        const hashArray = Array.from(new Uint8Array(hashBuffer));
+                        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                        
+                        // Highlight the last two characters
+                        const displayHash = hashHex.slice(0, -2) + '<span class="hash-highlight">' + hashHex.slice(-2) + '</span>';
+                        
+                        hashPreview.innerHTML = displayHash;
+                        hashPreview.classList.remove('calculating');
+                        
+                        // Add visual indication if the hash ends with 'ff'
+                        if (hashHex.endsWith('ff')) {
+                            hashPreview.classList.add('valid-hash');
+                        } else {
+                            hashPreview.classList.remove('valid-hash');
+                        }
+                    });
+                }, 200);
+            } else {
+                hashPreview.innerHTML = 'Select two numbers to see their hash';
+                hashPreview.classList.remove('calculating', 'valid-hash');
+            }
+        }
+    });
+
+    // Function to generate new puzzle
+    function generateNewPuzzle() {
+        const puzzleContainer = document.getElementById('puzzle-numbers');
+        puzzleContainer.innerHTML = '<div class="loading-spinner"></div>';
+        
+        fetch('/refresh_captcha')
+            .then(response => response.json())
+            .then(data => {
+                puzzleContainer.innerHTML = '';
+                
+                if (data.captcha_numbers) {
+                    data.captcha_numbers.forEach(number => {
+                        const numDiv = document.createElement('div');
+                        numDiv.className = 'number-tile';
+                        numDiv.textContent = number;
+                        numDiv.dataset.value = number;
+                        puzzleContainer.appendChild(numDiv);
+                    });
+                    
+                    // Re-attach event listeners
+                    document.querySelectorAll('.number-tile').forEach(tile => {
+                        tile.addEventListener('click', function() {
+                            this.classList.toggle('selected');
+                            updateSelection();
+                        });
+                    });
+                } else {
+                    puzzleContainer.innerHTML = '<div class="error-message">Error loading numbers</div>';
+                }
+                
+                // Reset inputs and hash preview
+                clearSelection();
+            })
+            .catch(error => {
+                console.error('Error refreshing puzzle:', error);
+                puzzleContainer.innerHTML = '<div class="error-message">Failed to generate new numbers</div>';
+            });
+    }
+
+    // Function to clear selection
+    function clearSelection() {
+        document.getElementById('first_number').value = '';
+        document.getElementById('second_number').value = '';
+        
+        document.querySelectorAll('.number-tile').forEach(num => {
+            num.classList.remove('selected');
+        });
+        
+        document.getElementById('hash-value').innerHTML = 'Select two numbers to see their hash';
+        document.getElementById('hash-value').classList.remove('calculating', 'valid-hash');
+    }
+
+    // Update inputs based on selected tiles
+    function updateSelection() {
+        const selected = document.querySelectorAll('.number-tile.selected');
+        const firstNumberInput = document.getElementById('first_number');
+        const secondNumberInput = document.getElementById('second_number');
+        
+        firstNumberInput.value = '';
+        secondNumberInput.value = '';
+        
+        if (selected.length > 0) {
+            firstNumberInput.value = selected[0].dataset.value;
+        }
+        
+        if (selected.length > 1) {
+            secondNumberInput.value = selected[1].dataset.value;
+        }
+        
+        // Update hash preview
+        const hashPreview = document.getElementById('hash-value');
+        if (firstNumberInput.value && secondNumberInput.value) {
+            hashPreview.innerHTML = 'Computing hash...';
+            // Full function will be called by the click handler
+        } else {
+            hashPreview.innerHTML = 'Select two numbers to see their hash';
+            hashPreview.classList.remove('calculating', 'valid-hash');
+        }
+    }
+    </script>
+</body>
+</html>
